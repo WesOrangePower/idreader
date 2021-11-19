@@ -7,69 +7,39 @@ pub enum APDUResponse {
     CommandSuccess = 0x6100, // 61 Command successfully executed; ‘XX’ bytes of data are available and can be requested using GET RESPONSE.
 
     // 62 - State of non-volatile memory unchanged. (WARN)
-    NoInformationGivenNVRAMUnchanged = 0x6200,
-    // 62 00 No information given (NV-Ram not changed)
-    NVRamNotChanged = 0x6201,
-    // 62 01 NV-Ram not changed 1.
-    ReturnedDataMayBeCorrupted = 0x6281,
-    // 62 81 Part of returned data may be corrupted.
-    EOFReachedBeforeReadingLeBytes = 0x6282,
-    // 62 82 End of file/record reached before reading Le bytes.
-    SelectedFileInvalidated = 0x6283,
-    // 62 83  Selected file invalidated. (WARNING)
-    SelectedFileNotValid = 0x6284,
-    // 62 84 Selected file is not valid. FCI not formated according to ISO.
-    NoInputFromCardSensor = 0x6285,
-    // 62 85 No input data available from a sensor on the card. No Purse Engine enslaved for R3bc
-    WrongRMac = 0x62A2,
-    // 62 A2 OR 62 F1 Wrong R-MAC.
-    CardLocked = 0x62A4,
-    // 62 A4 Card locked (during reset()).
-    CounterWithValueSW2_2 = 0x62C0,
-    // 62 Cx Counter with value x (command dependent).
-    InternalReset = 0x62F3,
-    // 62 F3 Internal Reset.
-    DefaultAgentLocked = 0x62F5,
-    // 62 F5 Default agent locked.
-    CardholderLocked = 0x62F7,
-    // 62 F7 Cardholder locked.
-    BasementIsCurrentAgent = 0x62F8,
-    // 62 F8 Basement is current agent.
+    NoInformationGivenNVRAMUnchanged = 0x6200, // 62 00 No information given (NV-Ram not changed)
+    NVRamNotChanged = 0x6201,                  // 62 01 NV-Ram not changed 1.
+    ReturnedDataMayBeCorrupted = 0x6281,       // 62 81 Part of returned data may be corrupted.
+    EOFReachedBeforeReadingLeBytes = 0x6282, // 62 82 End of file/record reached before reading Le bytes.
+    SelectedFileInvalidated = 0x6283,        // 62 83  Selected file invalidated. (WARNING)
+    SelectedFileNotValid = 0x6284, // 62 84 Selected file is not valid. FCI not formated according to ISO.
+    NoInputFromCardSensor = 0x6285, // 62 85 No input data available from a sensor on the card. No Purse Engine enslaved for R3bc
+    WrongRMac = 0x62A2,             // 62 A2 OR 62 F1 Wrong R-MAC.
+    CardLocked = 0x62A4,            // 62 A4 Card locked (during reset()).
+    CounterWithValueSW2_2 = 0x62C0, // 62 Cx Counter with value x (command dependent).
+    InternalReset = 0x62F3,         // 62 F3 Internal Reset.
+    DefaultAgentLocked = 0x62F5,    // 62 F5 Default agent locked.
+    CardholderLocked = 0x62F7,      // 62 F7 Cardholder locked.
+    BasementIsCurrentAgent = 0x62F8, // 62 F8 Basement is current agent.
     CALCKeySetNotUnblocked = 0x62F9, // 62 F9 CALC Key Set not unblocked.
 
     // 63 - State of non-volatile memory changed (WARN)
-    NoInformationGivenNVRAMChanged = 0x6300,
-    // 63 00 No information given (NV-Ram changed)
-    FileFilledUpByTheLastWrite = 0x6381,
-    // 63 81 File filled up by the last write. Loading/updating is not allowed.
-    CardKeyNotSupported = 0x6382,
-    // 63 82 Card key not supported.
-    ReaderKeyNotSupported = 0x6383,
-    // 63 83 Reader key not supported.
-    PlaintextTransmissionNotSupported = 0x6384,
-    // 63 84 Plaintext transmission not supported.
-    SecuredTransmissionNotSupported = 0x6385,
-    // 63 85 Secured transmission not supported.
-    VolatileMemoryNotAvailable = 0x6386,
-    // 63 86 Volatile memory is not available.
-    NonVolatileMemoryNotAvailable = 0x6387,
-    // 63 87 Non-volatile memory is not available.
-    KeyNumberInvalid = 0x6388,
-    // 63 88 Key number not valid.
-    KeyLengthInvalid = 0x6389,
-    // 63 89 Key length is not correct.
-    VerifyFailNoRetries = 0x63C0,
-    // 63 C0 Verify fail, no try left.
-    VerifyFail1retry = 0x63C1,
-    // 63 C1 Verify fail, 1 try left.
-    VerifyFail2retries = 0x63C2,
-    // 63 C2 Verify fail, 2 tries left.
-    VerifyFail3retries = 0x63C3,
-    // 63 C3 Verify fail, 3 tries left.
-    CounterReachedValueSW2_2 = 0x63CF,
-    // 63 CX The counter has reached the value ‘x’ (0 = x = 15) (command dependent).
-    MoreDataExpected = 0x63F1,
-    // 63 F1 More data expected.
+    NoInformationGivenNVRAMChanged = 0x6300, // 63 00 No information given (NV-Ram changed)
+    FileFilledUpByTheLastWrite = 0x6381, // 63 81 File filled up by the last write. Loading/updating is not allowed.
+    CardKeyNotSupported = 0x6382,        // 63 82 Card key not supported.
+    ReaderKeyNotSupported = 0x6383,      // 63 83 Reader key not supported.
+    PlaintextTransmissionNotSupported = 0x6384, // 63 84 Plaintext transmission not supported.
+    SecuredTransmissionNotSupported = 0x6385, // 63 85 Secured transmission not supported.
+    VolatileMemoryNotAvailable = 0x6386, // 63 86 Volatile memory is not available.
+    NonVolatileMemoryNotAvailable = 0x6387, // 63 87 Non-volatile memory is not available.
+    KeyNumberInvalid = 0x6388,           // 63 88 Key number not valid.
+    KeyLengthInvalid = 0x6389,           // 63 89 Key length is not correct.
+    VerifyFailNoRetries = 0x63C0,        // 63 C0 Verify fail, no try left.
+    VerifyFail1retry = 0x63C1,           // 63 C1 Verify fail, 1 try left.
+    VerifyFail2retries = 0x63C2,         // 63 C2 Verify fail, 2 tries left.
+    VerifyFail3retries = 0x63C3,         // 63 C3 Verify fail, 3 tries left.
+    CounterReachedValueSW2_2 = 0x63CF, // 63 CX The counter has reached the value ‘x’ (0 = x = 15) (command dependent).
+    MoreDataExpected = 0x63F1,         // 63 F1 More data expected.
     MoreDataExpectedCommandPending = 0x63F2, // 63 F2 More data expected and proactive command pending.
 
     // 64 - State of non-volatile memory unchanged (ERROR)

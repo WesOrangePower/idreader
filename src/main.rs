@@ -19,7 +19,6 @@ use std::{io, str};
 
 fn main() {
     loop_console();
-    // listTransparentPersonalData();
 }
 
 fn get_card() -> Card {
@@ -85,7 +84,7 @@ fn listTransparentPersonalData() {
 fn decode_hex(s: &str) -> Result<Vec<u8>, String> {
     let s2: &str = &*s.replace(" ", "").replace("\n", "");
     if s2.len() % 2 != 0 {
-        return Err("Given string ".to_owned() + s + " does not divide into bytes.");
+        return Err("string ".to_owned() + s + " does not divide into bytes");
     }
 
     (0..s2.len())
@@ -93,7 +92,7 @@ fn decode_hex(s: &str) -> Result<Vec<u8>, String> {
         .map(|i| {
             let r = u8::from_str_radix(&s2[i..i + 2], 16);
             if r.is_err() {
-                Err("Parsing of ".to_owned() + s + " failed.")
+                Err("Parsing of ".to_owned() + s + " failed")
             } else {
                 Ok(r.unwrap())
             }
@@ -109,7 +108,7 @@ fn loop_console() {
         let mut input = String::new();
         io::stdin()
             .read_line(&mut input)
-            .expect("Failed to read line");
+            .expect("failed to read line");
 
         match &*input.trim().to_ascii_lowercase() {
             "exit" => {
@@ -118,7 +117,7 @@ fn loop_console() {
 
             "card" => {
                 card = get_card();
-                println!("Card refreshed.");
+                println!("card refreshed");
             }
 
             "select main aid" => {
@@ -143,6 +142,10 @@ fn loop_console() {
                 println!(">>{}", select_DF_5000);
                 let apdu = &*decode_hex(select_DF_5000).unwrap();
                 run_and_output_command(&card, apdu);
+            }
+
+            "get id transparent personal data" => {
+                listTransparentPersonalData();
             }
 
             _ => {
