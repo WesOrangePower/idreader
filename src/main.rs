@@ -18,6 +18,7 @@ use std::io::Write;
 use std::{io, str};
 
 fn main() {
+    // println!("{:?}", APDUResponse::APDUResponse::Ok );
     loop_console();
 }
 
@@ -68,14 +69,12 @@ fn listTransparentPersonalData() {
         for char in &rapdu[..rapdu.len() - 2] {
             print!("{}", *char as char);
         }
-        unsafe {
-            print!(
-                " SW1={} SW2={}: {:?}",
-                sw1,
-                sw2,
-                APDUResponse::translate_response(sw1, sw2)
-            );
-        }
+        print!(
+            " SW1={} SW2={}: {:?}",
+            sw1,
+            sw2,
+            APDUResponse::translate_response(sw1, sw2)
+        );
         print!("\n");
         io::stdout().flush().unwrap();
     }
@@ -110,6 +109,11 @@ fn loop_console() {
             .read_line(&mut input)
             .expect("failed to read line");
 
+        if input.trim().to_ascii_lowercase().starts_with("a2x ") &&
+            input.trim().to_ascii_lowercase().len().gt(&(4 as usize)) {
+            println!("a2x: {}", a2x(&input.trim()[4..]));
+            continue
+        }
         match &*input.trim().to_ascii_lowercase() {
             "exit" => {
                 std::process::exit(0);
@@ -121,25 +125,25 @@ fn loop_console() {
             }
 
             "select main aid" => {
-                println!(">>{}", select_main_AID_command);
+                println!(">> {}", select_main_AID_command);
                 let apdu = &*decode_hex(select_main_AID_command).unwrap();
                 run_and_output_command(&card, apdu);
             }
 
             "read bytes" => {
-                println!(">>{}", read_bytes);
+                println!(">> {}", read_bytes);
                 let apdu = &*decode_hex(read_bytes).unwrap();
                 run_and_output_command(&card, apdu);
             }
 
             "select df" => {
-                println!(">>{}", select_DF);
+                println!(">> {}", select_DF);
                 let apdu = &*decode_hex(select_DF).unwrap();
                 run_and_output_command(&card, apdu);
             }
 
             "select df 5000" => {
-                println!(">>{}", select_DF_5000);
+                println!(">> {}", select_DF_5000);
                 let apdu = &*decode_hex(select_DF_5000).unwrap();
                 run_and_output_command(&card, apdu);
             }
@@ -149,8 +153,10 @@ fn loop_console() {
             }
 
             _ => {
-                let apdu = &*decode_hex(input.trim()).expect("Inconvertible.");
-                run_and_output_command(&card, apdu);
+                match decode_hex(input.trim()) {
+                    Ok(apdu) => run_and_output_command(&card, &*apdu),
+                    Err(err) => println!("{:?}", err)
+                }
             }
         }
     }
@@ -173,14 +179,26 @@ fn run_and_output_command(card: &Card, apdu: &[u8]) {
     for c in &rapdu[..rapdu.len() - 2] {
         print!("{}", *c as char);
     }
-    unsafe {
-        print!(
-            " SW1={} SW2={}: {:?}",
-            sw1,
-            sw2,
-            APDUResponse::translate_response(sw1, sw2)
-        );
-    }
+    print!(
+        " SW1={} SW2={}: {:?}",
+        sw1,
+        sw2,
+        APDUResponse::translate_response(sw1, sw2)
+    );
     print!("\n");
     io::stdout().flush().unwrap();
 }
+fn a2x(s: &str) -> String {
+  let mut hex: String = String::default();
+  let ascii: String = s.into();
+
+  for character in ascii.clone().into_bytes() {
+    hex += &format!("{:02X} ", character);
+  }
+
+  // removes the trailing space at the end
+  hex.pop();
+
+    hex
+}
+

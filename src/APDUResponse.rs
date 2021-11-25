@@ -1,7 +1,7 @@
 #[repr(u16)]
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub enum APDUResponse {
-    ClassNotSuported = 0x0600, // 6 Class not supported. (ERROR)
+    ClassIsNotSupported = 0x0600, // 6 Class not supported. (ERROR)
 
     // 61 - Response bytes still available (INFORMATION)
     CommandSuccess = 0x6100, // 61 Command successfully executed; ‘XX’ bytes of data are available and can be requested using GET RESPONSE.
@@ -108,7 +108,7 @@ pub enum APDUResponse {
     // 6F - Internal exception
     CommandAborted = 0x6F00, // 6F 00 Command aborted &#8211; more exact diagnosis not possible (e.g., operating system error).
     CardDead = 0x6FFF,       // 6F FF Card dead (overuse, …)
-    CommandExecuted = 0x9000, // 90 00 Command successfully executed (OK).
+    Ok = 0x9000, // 90 00 Command successfully executed (OK).
     PinInvalid3OrMoreTries = 0x9004, // 90 04 PIN not succesfully verified, 3 or more PIN tries left
     KeyOrFileNotFound = 0x9008, // 90 08 Key/file not found 90
     UnblockTryCounterReachedZero = 0x8000, // 80 Unblock Try Counter has reached zero
@@ -129,7 +129,7 @@ pub enum APDUResponse {
     AdditionalDataFrameIsExpectedToBeSent = 0x91AF, // 91 AF Additional data frame is expected to be sent
     OutOfBoundary = 0x91BE,                         // 91 BE Out of boundary
     UnrecoverableErrorWithinPICC = 0x91C1,          // 91 C1 Unrecoverable error within PICC
-    PerivousCommandWasNotCompleted = 0x91CA, // 91 CA Previous Command was not fully completed
+    PreviousCommandWasNotCompleted = 0x91CA, // 91 CA Previous Command was not fully completed
     PICCWasDisabledByUnrecoverableError = 0x91CD, // 91 CD PICC was disabled by an unrecoverable error
     NumberOfApplicationsIsLimitedTo28 = 0x91CE,   // 91 CE Number of Applications limited to 28
     FileOrApplicationExists = 0x91DE,             // 91 DE File or application already exists
@@ -226,7 +226,35 @@ pub enum APDUResponse {
     CommandSuccessfullyExecuted = 0x9FFF, // 9F XX Command successfully executed; &#8216;xx&#8217; bytes of data are available and can be requested using GET RESPONSE.
 }
 
-pub unsafe fn translate_response(sw1: u8, sw2: u8) -> APDUResponse {
-    let as_u16 = u16::from_be_bytes([sw1, sw2]);
-    std::mem::transmute_copy::<u16, APDUResponse>(&as_u16)
+impl APDUResponse {
+    pub fn iterator() -> impl Iterator<Item = APDUResponse> {
+        [
+    APDUResponse::ClassIsNotSupported, APDUResponse::CommandSuccess, APDUResponse::NoInformationGivenNVRAMUnchanged, APDUResponse::NVRamNotChanged, APDUResponse::ReturnedDataMayBeCorrupted, APDUResponse::EOFReachedBeforeReadingLeBytes, APDUResponse::SelectedFileInvalidated, APDUResponse::SelectedFileNotValid, APDUResponse::NoInputFromCardSensor, APDUResponse::WrongRMac, APDUResponse::CardLocked, APDUResponse::CounterWithValueSW2_2, APDUResponse::InternalReset, APDUResponse::DefaultAgentLocked, APDUResponse::CardholderLocked, APDUResponse::BasementIsCurrentAgent, APDUResponse::CALCKeySetNotUnblocked, APDUResponse::NoInformationGivenNVRAMChanged, APDUResponse::FileFilledUpByTheLastWrite, APDUResponse::CardKeyNotSupported, APDUResponse::ReaderKeyNotSupported, APDUResponse::PlaintextTransmissionNotSupported, APDUResponse::SecuredTransmissionNotSupported, APDUResponse::VolatileMemoryNotAvailable, APDUResponse::NonVolatileMemoryNotAvailable, APDUResponse::KeyNumberInvalid, APDUResponse::KeyLengthInvalid, APDUResponse::VerifyFailNoRetries, APDUResponse::VerifyFail1retry, APDUResponse::VerifyFail2retries, APDUResponse::VerifyFail3retries, APDUResponse::CounterReachedValueSW2_2, APDUResponse::MoreDataExpected, APDUResponse::MoreDataExpectedCommandPending, APDUResponse::CommandTimeout, APDUResponse::NoInformationGivenStateOfNVRAMChanged, APDUResponse::WriteErrorMemFailure, APDUResponse::MemFailure, APDUResponse::ReceivingTimeout, APDUResponse::ReceivingCharParityError, APDUResponse::WrongChecksum, APDUResponse::CurrentDFWithoutFC, APDUResponse::NoSFOrKFUnderCurrentDF, APDUResponse::IncorrectEncryptionDecryptionPadding, APDUResponse::WrongLength, APDUResponse::NoInformationGivenOperationNotSupported, APDUResponse::LogicalChannelNotSupported, APDUResponse::SecureMessagingNotSupported, APDUResponse::LastCommandOfTheChainExpected, APDUResponse::CommandChainingNotSupported, APDUResponse::NoInformationGivenCommandNotAllowed, APDUResponse::CommandNotAcceptedInInactiveState, APDUResponse::CommandIncompatibleWithFileStructure, APDUResponse::SecurityConditionNotSatisfied, APDUResponse::AuthenticationMethodBlocked, APDUResponse::ReferencedDataReversiblyBlocked, APDUResponse::ConditionsOfUseNotSatisfied, APDUResponse::CommandNotAllowed, APDUResponse::ExpectedSecureMessagingObjectMissing, APDUResponse::IncorrectSecureMessagingDataObject, APDUResponse::Reserved, APDUResponse::DataMustBeUpdatedAgain, APDUResponse::BlockedByPOL1, APDUResponse::PermissionDenied, APDUResponse::PermissionDeniedMissingPrivilege, APDUResponse::NoInformationGivenP1P2Incorrect, APDUResponse::DataFieldIncorrect, APDUResponse::FunctionNotSupported, APDUResponse::FileNotFound, APDUResponse::RecordNotFound, APDUResponse::InsufficientMemorySpaceInRecordOrFile, APDUResponse::LCInconsistentWithTLVStructure, APDUResponse::IncorrectP1OrP2, APDUResponse::LCInconsistentWithP1P2, APDUResponse::ReferencedDataNotFound, APDUResponse::FileAlreadyExists, APDUResponse::DFNameAlreadyExists, APDUResponse::WrongParameterValue, APDUResponse::WrongParametersP1P2, APDUResponse::IncorrectP3Length, APDUResponse::IncorrectLengthInLe, APDUResponse::InstructionCodeNotSupportedOrInvalid, APDUResponse::ClassNotSupported, APDUResponse::CommandAborted, APDUResponse::CardDead, APDUResponse::Ok, APDUResponse::PinInvalid3OrMoreTries, APDUResponse::KeyOrFileNotFound, APDUResponse::UnblockTryCounterReachedZero, APDUResponse::OK, APDUResponse::ActivityLockOrLockableHasWrongValue, APDUResponse::TransactionNumberReachedLimit, APDUResponse::NoChanges, APDUResponse::InsufficientNVRAMToCompleteCommand, APDUResponse::CommandCoreNotSupported, APDUResponse::CRCOrMACDoesNotMatchData, APDUResponse::InvalidKeyNumberSpecified, APDUResponse::LengthOFCommandStringInvalid, APDUResponse::RequestedCommandNotAllowed, APDUResponse::InvalidValueOfTheParameter, APDUResponse::RequestedAIDNotPresentOnPICC, APDUResponse::UnrecoverableErrorWithinApplication, APDUResponse::AuthenticationStatusDoesNotAllowRequestedCommand, APDUResponse::AdditionalDataFrameIsExpectedToBeSent, APDUResponse::OutOfBoundary, APDUResponse::UnrecoverableErrorWithinPICC, APDUResponse::PreviousCommandWasNotCompleted, APDUResponse::PICCWasDisabledByUnrecoverableError, APDUResponse::NumberOfApplicationsIsLimitedTo28, APDUResponse::FileOrApplicationExists, APDUResponse::CouldNotCompleteNVWriteOperationDueToLossOfPower, APDUResponse::FileNumberDoesNotExist, APDUResponse::UnrecoverableErrorWithinFile, APDUResponse::WritingToEEPROMSuccessful, APDUResponse::OutOfStorage, APDUResponse::WritingToEEPROMNotSuccessful, APDUResponse::IntegrityError, APDUResponse::CandidateS2Invalid, APDUResponse::ApplicationIsPermanentlyLocked, APDUResponse::NoEFSelected, APDUResponse::CandidateCurrencyCodeDoesNotMatchPurseCurrency, APDUResponse::CadidateAmountTooHigh, APDUResponse::CandidateAmountTooLow, APDUResponse::FIDOrRecordOrComparisonPatternNotFound, APDUResponse::ProblemsInDataField, APDUResponse::RequiredMACUnavailable, APDUResponse::BadCurrency, APDUResponse::CurrencyNotSupported, APDUResponse::BadSequence, APDUResponse::SlaveNotFound, APDUResponse::PinBlockedAndTryCounterIs2or1, APDUResponse::MainKeysAreBlocked, APDUResponse::PinVerificationUnsuccessful3orMoreRetries, APDUResponse::BaseKey, APDUResponse::CMACLimitExceeded, APDUResponse::RMACLimitExceeded, APDUResponse::SequenceCounterLimitExceeded, APDUResponse::RMACLengthLimitExceeded, APDUResponse::ServiceNotAvailable, APDUResponse::NoPinDefined, APDUResponse::AuthenticationFailed, APDUResponse::ASKRANDOMOrGIVERANDOMNotSatisfied, APDUResponse::PinVerificationUnsuccessful, APDUResponse::INCREASEOrDECREASENotExecutedLimitReached, APDUResponse::AuthenticationError, APDUResponse::OnePinRetryLeft, APDUResponse::PinUnsuccessfullyVerified1Retry, APDUResponse::WrongStatusCardholderLock, APDUResponse::MissingPrivilege, APDUResponse::PinNotInstalled, APDUResponse::WrongStatusRMACState, APDUResponse::TwoPinRetryLeft, APDUResponse::PinUnsuccessfullyVerified2Retries, APDUResponse::WrongParameterValueDoubleAgentAID, APDUResponse::WrongParameterValueDoubleAgentType, APDUResponse::IncorrectCertificateType, APDUResponse::IncorrectSessionDataSize, APDUResponse::IncorrectDIRFileOrRecordSize, APDUResponse::IncorrectFCIRecordSize, APDUResponse::IncorrectCodeSize, APDUResponse::InsufficientMemoryToLoadApplication, APDUResponse::InvalidAID, APDUResponse::DuplicateAID, APDUResponse::ApplicationPreviouslyLoaded, APDUResponse::ApplicationHistoryListFull, APDUResponse::ApplicationNotOpen, APDUResponse::InvalidOffset, APDUResponse::ApplicationAlreadyLoaded, APDUResponse::InvalidCertificate, APDUResponse::InvalidSignature, APDUResponse::InvalidKTU, APDUResponse::MSMControlsNotSet, APDUResponse::ApplicationSignatureDoesNotExist, APDUResponse::KTUDoesNotExist, APDUResponse::ApplicationNotLoaded, APDUResponse::InvalidOpenCommandDataLength, APDUResponse::CheckDataParameterIsIncorrectInvalidStartAddress, APDUResponse::CheckDataParameterIsIncorrectInvalidLength, APDUResponse::CheckDataParameterIsIncorrectCheckDataParameterIncorrect, APDUResponse::InvalidMSMControlsCiphertext, APDUResponse::MSMControlsAlreadySet, APDUResponse::MSMControlsDataLengthLessThan2B, APDUResponse::InvalidMSMControlsDataLength, APDUResponse::ExcessMSMControlsCiphertext, APDUResponse::VerificationOfMSMControlsDataFailed, APDUResponse::InvalidMCDIssuerProductionID, APDUResponse::InvalidMCDIssuerID, APDUResponse::InvalidSetMSMControlsDataDate, APDUResponse::InvalidMCDNumber, APDUResponse::MacVerificationFailed, APDUResponse::MaximumNumberOfUnblocksReached, APDUResponse::CardWasNotBlocked, APDUResponse::CryptoFunctionsNotAvailable, APDUResponse::NoApplicationLoaded, APDUResponse::PinIsNotInstalled, APDUResponse::PinUnsuccessfullyVerifiedPinNotInstalled, APDUResponse::PinBlockedUnblockTryCounterIs3, APDUResponse::PinUnsuccessfullyVerifiedPinBlockedAndUnblockTryCounterIs3, APDUResponse::CommandSuccessfullyExecuted
+        ].iter().copied()
+    }
+}
+
+
+struct rapdu {
+    sw1: u8,
+    sw2: u8,
+}
+
+impl rapdu {
+    pub fn asAPDUResponse(&self) -> Result<APDUResponse, &'static str> {
+        translate_response(self.sw1, self.sw2)
+    }
+}
+
+pub fn translate_response(sw1: u8, sw2: u8) -> Result<APDUResponse, &'static str> {
+    let swu16 = u16::from_be_bytes([sw1, sw2]);
+    let iter = APDUResponse::iterator();
+    for code in iter {
+        if swu16 == code as u16 {
+            return Ok(code);
+        }
+    }
+    Err("No known code with such sw1 and sw2.")
+    // let as_u16 = u16::from_be_bytes([sw1, sw2]);
+    // std::mem::transmute_copy::<u16, APDUResponse>(&as_u16)
 }
